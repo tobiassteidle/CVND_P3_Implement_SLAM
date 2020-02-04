@@ -7,7 +7,7 @@ import random
 #
 # This robot lives in 2D, x-y space, and its motion is
 # pointed in a random direction, initially.
-# It moves in a straight line until it comes close to a wall 
+# It moves in a straight line until it comes close to a wall
 # at which point it stops.
 #
 # For measurements, it  senses the x- and y-distance
@@ -17,7 +17,7 @@ import random
 # cluttered math.
 #
 class robot:
-    
+
     # --------
     # init:
     #   creates a robot with the specified parameters and initializes
@@ -34,22 +34,22 @@ class robot:
         self.measurement_noise = measurement_noise
         self.landmarks = []
         self.num_landmarks = 0
-    
-    
+
+
     # returns a positive, random float
     def rand(self):
         return random.random() * 2.0 - 1.0
-    
-    
+
+
     # --------
     # move: attempts to move robot by dx, dy. If outside world
     #       boundary, then the move does nothing and instead returns failure
     #
     def move(self, dx, dy):
-        
+
         x = self.x + dx + self.rand() * self.motion_noise
         y = self.y + dy + self.rand() * self.motion_noise
-        
+
         if x < 0.0 or x > self.world_size or y < 0.0 or y > self.world_size:
             return False
         else:
@@ -64,9 +64,8 @@ class robot:
     #        is of variable length. Set measurement_range to -1 if you want all
     #        landmarks to be visible at all times
     #
-    
+
     ## TODO: paste your complete the sense function, here
-    ## make sure the indentation of the code is correct
     def sense(self):
         ''' This function does not take in any parameters, instead it references internal variables
             (such as self.landamrks) to measure the distance between the robot and any landmarks
@@ -76,20 +75,32 @@ class robot:
             This function should account for measurement_noise and measurement_range.
             One item in the returned list should be in the form: [landmark_index, dx, dy].
             '''
-           
+
         measurements = []
-        
+
         ## TODO: iterate through all of the landmarks in a world
-        
-        ## TODO: For each landmark
-        ## 1. compute dx and dy, the distances between the robot and the landmark
-        ## 2. account for measurement noise by *adding* a noise component to dx and dy
-        ##    - The noise component should be a random value between [-1.0, 1.0)*measurement_noise
-        ##    - Feel free to use the function self.rand() to help calculate this noise component
-        ## 3. If either of the distances, dx or dy, fall outside of the internal var, measurement_range
-        ##    then we cannot record them; if they do fall in the range, then add them to the measurements list
-        ##    as list.append([index, dx, dy]), this format is important for data creation done later
-        
+        for index in range(len(self.landmarks)):
+            landmark = self.landmarks[index]
+
+            ## TODO: For each landmark
+            x_l = landmark[0]
+            y_l = landmark[1]
+
+            ## 1. compute dx and dy, the distances between the robot and the landmark
+            ## 2. account for measurement noise by *adding* a noise component to dx and dy
+            ##    - The noise component should be a random value between [-1.0, 1.0)*measurement_noise
+            ##    - Feel free to use the function self.rand() to help calculate this noise component
+            ##    - It may help to reference the `move` function for noise calculation
+            dx = (x_l - self.x) + self.rand() * self.measurement_noise
+            dy = (y_l - self.y) + self.rand() * self.measurement_noise
+
+            ## 3. If either of the distances, dx or dy, fall outside of the internal var, measurement_range
+            ##    then we cannot record them; if they do fall in the range, then add them to the measurements list
+            ##    as list.append([index, dx, dy]), this format is important for data creation done later
+            radius = self.measurement_range
+            if dx > -radius and dx < radius and dy > -radius and dy < radius:
+                measurements.append([index, dx, dy])
+
         ## TODO: return the final, complete list of measurements
         return measurements
 
